@@ -1,22 +1,22 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1421767293470
-Build-Jdk: 1.7.0_65
-Built-By: cristian
+Bnd-LastModified: 1422440815727
+Build-Jdk: 1.8.0_31
+Built-By: Cristian
 Bundle-Activator: ugr.cristian.topologyApp.Activator
 Bundle-ManifestVersion: 2
 Bundle-Name: topologyApp
 Bundle-SymbolicName: ugr.cristian.topologyApp
 Bundle-Version: 0.1.0
 Created-By: Apache Maven Bundle Plugin
-Export-Package: ugr.cristian.topologyApp;uses:="org.opendaylight.control
- ler.sal.flowprogrammer,org.opendaylight.controller.sal.core,org.openday
- light.controller.topologymanager,org.apache.felix.dm,org.opendaylight.c
- ontroller.sal.topology,org.opendaylight.controller.switchmanager,org.sl
- f4j";version="0.1.0"
+Export-Package: ugr.cristian.topologyApp;uses:="org.slf4j,org.opendaylig
+ ht.controller.sal.topology,org.opendaylight.controller.switchmanager,or
+ g.opendaylight.controller.topologymanager,org.opendaylight.controller.s
+ al.core,org.opendaylight.controller.sal.flowprogrammer,org.apache.felix
+ .dm";version="0.1.0"
 Import-Package: org.apache.felix.dm;version="[3.0,4)",org.opendaylight.c
  ontroller.sal.core;version="[0.7,1)",org.opendaylight.controller.sal.fl
  owprogrammer;version="[0.7,1)",org.opendaylight.controller.sal.topology
  ;version="[0.7,1)",org.opendaylight.controller.switchmanager;version="[
- 0.7,1)",org.opendaylight.controller.topologymanager;version="[0.5,1)",o
+ 0.7,1)",org.opendaylight.controller.topologymanager;version="[0.4,1)",o
  rg.slf4j;version="[1.7,2)"
 Tool: Bnd-1.50.0
