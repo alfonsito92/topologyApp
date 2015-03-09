@@ -4,7 +4,7 @@
 
   <groupId>ugr.cristian.topologyApp</groupId>
   <artifactId>topologyApp</artifactId>
-  <version>0.1</version>
+  <version>0.3</version>
   <packaging>bundle</packaging>
 
   <build>
@@ -32,52 +32,52 @@
     </plugins>
   </build>
   <dependencies>
-    <dependency>
-      <groupId>org.opendaylight.controller</groupId>
-      <artifactId>sal</artifactId>
-      <version>0.7.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.opendaylight.controller</groupId>
-      <artifactId>switchmanager</artifactId>
-      <version>0.7.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.opendaylight.controller</groupId>
-      <artifactId>topologymanager</artifactId>
-      <version>0.4.4-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>org.opendaylight.controller</groupId>
-      <artifactId>routing.dijkstra_implementation</artifactId>
-      <version>0.4.4-SNAPSHOT</version>
-    </dependency>
-  </dependencies>
-  <repositories>
-    <!-- OpenDaylight releases -->
-    <repository>
-      <id>opendaylight-mirror</id>
-      <name>opendaylight-mirror</name>
-      <url>http://nexus.opendaylight.org/content/groups/public/</url>
-      <snapshots>
-          <enabled>false</enabled>
-      </snapshots>
-      <releases>
-          <enabled>true</enabled>
-          <updatePolicy>never</updatePolicy>
-      </releases>
-    </repository>
-    <!-- OpenDaylight snapshots -->
-    <repository>
-      <id>opendaylight-snapshot</id>
-      <name>opendaylight-snapshot</name>
-      <url>http://nexus.opendaylight.org/content/repositories/opendaylight.snapshot/</url>
-      <snapshots>
-          <enabled>true</enabled>
-      </snapshots>
-      <releases>
-          <enabled>false</enabled>
-      </releases>
-    </repository>
-  </repositories>
-</project>
+      <dependency>
+        <groupId>org.opendaylight.controller</groupId>
+        <artifactId>sal</artifactId>
+        <version>0.7.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.opendaylight.controller</groupId>
+        <artifactId>switchmanager</artifactId>
+        <version>0.7.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.opendaylight.controller</groupId>
+        <artifactId>topologymanager</artifactId>
+        <version>0.4.4-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+        <groupId>org.opendaylight.controller</groupId>
+        <artifactId>statisticsmanager</artifactId>
+        <version>0.5.1-SNAPSHOT</version>
+      </dependency>
+    </dependencies>
+    <repositories>
+      <!-- OpenDaylight releases -->
+      <repository>
+        <id>opendaylight-mirror</id>
+        <name>opendaylight-mirror</name>
+        <url>http://nexus.opendaylight.org/content/groups/public/</url>
+        <snapshots>
+            <enabled>false</enabled>
+        </snapshots>
+        <releases>
+            <enabled>true</enabled>
+            <updatePolicy>never</updatePolicy>
+        </releases>
+      </repository>
+      <!-- OpenDaylight snapshots -->
+      <repository>
+        <id>opendaylight-snapshot</id>
+        <name>opendaylight-snapshot</name>
+        <url>http://nexus.opendaylight.org/content/repositories/opendaylight.snapshot/</url>
+        <snapshots>
+            <enabled>true</enabled>
+        </snapshots>
+        <releases>
+            <enabled>false</enabled>
+        </releases>
+      </repository>
+    </repositories>
+  </project>

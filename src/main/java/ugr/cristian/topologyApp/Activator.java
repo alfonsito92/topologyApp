@@ -25,16 +25,13 @@ import org.opendaylight.controller.sal.core.ComponentActivatorAbstractBase;
 import org.opendaylight.controller.sal.flowprogrammer.IFlowProgrammerService;
 import org.opendaylight.controller.sal.packet.IDataPacketService;
 import org.opendaylight.controller.sal.packet.IListenDataPacket;
-import org.opendaylight.controller.sal.topology.IListenTopoUpdates;
+import org.opendaylight.controller.sal.routing.IRouting;
 import org.opendaylight.controller.switchmanager.ISwitchManager;
 import org.opendaylight.controller.topologymanager.ITopologyManager;
+import org.opendaylight.controller.statisticsmanager.IStatisticsManager;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import edu.uci.ics.jung.algorithms.shortestpath.DijkstraShortestPath;
-import edu.uci.ics.jung.graph.Graph;
-import edu.uci.ics.jung.graph.SparseMultigraph;
-import edu.uci.ics.jung.graph.util.EdgeType;
-
 
 public class Activator extends ComponentActivatorAbstractBase {
     private static final Logger log = LoggerFactory.getLogger(TopoHandler.class);
@@ -53,15 +50,15 @@ public class Activator extends ComponentActivatorAbstractBase {
             // Define exported and used services for TopoHandler component.
 
             Dictionary<String, Object> props = new Hashtable<String, Object>();
-            props.put("salListenerName", "mytopohandler");
+            props.put("salListenerName", "myTopoHandler");
 
-            // Export IListenTopoUpdates interface to receive packet-in events.
-            c.setInterface(new String[] {IListenTopoUpdates.class.getName()}, props);
+            // Export IListenDataPacket interface to receive packet-in events.
+            c.setInterface(new String[] {IListenDataPacket.class.getName()}, props);
 
-            // Need FlowProgrammerService for programming flows
+            // Need the DataPacketService for encoding, decoding, sending data packets
             c.add(createContainerServiceDependency(containerName).setService(
-                    IFlowProgrammerService.class).setCallbacks(
-                    "setFlowProgrammerService", "unsetFlowProgrammerService")
+                    IDataPacketService.class).setCallbacks(
+                    "setDataPacketService", "unsetDataPacketService")
                     .setRequired(true));
 
             // Need SwitchManager service for enumerating ports of switch
@@ -70,7 +67,19 @@ public class Activator extends ComponentActivatorAbstractBase {
                     "setSwitchManagerService", "unsetSwitchManagerService")
                     .setRequired(true));
 
-            // Need TopologyManager service to controll the Topology in a Proactive Way
+            // Need FlowProgrammerService for programming flows
+            c.add(createContainerServiceDependency(containerName).setService(
+                    IFlowProgrammerService.class).setCallbacks(
+                    "setFlowProgrammerService", "unsetFlowProgrammerService")
+                    .setRequired(true));
+
+            //Need a StatisticsManagerService to try to resolve new challenges.
+            c.add(createContainerServiceDependency(containerName).setService(
+                    IStatisticsManager.class).setCallbacks(
+                    "setStatisticsManagerService", "unsetStatisticsManagerService")
+                    .setRequired(true));
+
+            //Need a TopologyManagerService to try to obtain map with the topology
             c.add(createContainerServiceDependency(containerName).setService(
                     ITopologyManager.class).setCallbacks(
                     "setTopologyManagerService", "unsetTopologyManagerService")
