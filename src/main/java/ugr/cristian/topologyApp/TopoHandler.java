@@ -79,9 +79,11 @@ public class TopoHandler implements IListenDataPacket {
     private ITopologyManager topologyManager;
     private Map <InetAddress, NodeConnector> listIP = new HashMap <InetAddress, NodeConnector>();
     private ConcurrentMap< Map<InetAddress, Long>, NodeConnector> listIPMAC = new ConcurrentHashMap<Map<InetAddress, Long>, NodeConnector>();
-    private Map<Node, Set<Edge>> nodeEdgeTopology = new HashMap<Node, Set<Edge>>();
-    private Map<Edge, Set<Property>> edgeProperties = new HashMap<Edge, Set<Property>>();
-    private List<Host> hosts = new ArrayList<Host>();
+    private Map<Edge, Integer> weightMap = new HashMap <Edge, Integer>();
+    private Map<Node, Set<Edge>> nodeEdges = new HashMap<Node, Set<Edge>>();
+
+    private Edge edgeMatrix[][];
+    private int weightMatrix[][];
 
     private short idleTimeOut = 30;
     private short hardTimeOut = 60;
@@ -251,15 +253,7 @@ public class TopoHandler implements IListenDataPacket {
 
                   } else{
 
-                    /*************************Calculo ruta**************************/
 
-                    nodeEdgeTopology.clear();
-                    edgeProperties.clear();
-
-                    nodeEdgeTopology = topologyManager.getNodeEdges();
-                    edgeProperties = topologyManager.getEdges();
-
-                    /***************************************************************/
                     if(programFlow( srcAddr, srcMAC_B, dstAddr, dstMAC_B, egressConnector, node) ){
 
                       log.debug("Flujo instalado correctamente en el nodo " + node + " por el puerto " + egressConnector);
@@ -269,7 +263,13 @@ public class TopoHandler implements IListenDataPacket {
                       log.debug("Error instalando el flujo");
                     }
 
-                    log.debug("NodeConnectors con Host conectados: " + topologyManager.getNodeConnectorWithHost());
+                    /*************************Calculos**************************/
+                    Set<NodeConnector> nodeConnectorHost = topologyManager.getNodeConnectorWithHost();
+                    NodeConnector dstConnector = findHost(nodeConnectorHost, dstAddr);
+                    log.debug("El host con IP: " + dstAddr + " está conectado al conector: " + dstConnector);
+                    updateTopology();
+                    /***************************************************************/
+
 
                     inPkt.setOutgoingNodeConnector(egressConnector);
                     this.dataPacketService.transmitDataPacket(inPkt);
@@ -391,26 +391,102 @@ public class TopoHandler implements IListenDataPacket {
     Show differents options about the current topology
     */
 
-    private void showTopology(){
+    private void updateTopology(){
 
-      Map<Edge, Set<Property>> edges = this.topologyManager.getEdges();
-      log.debug("El mapa de Edges es: " + edges);
+      Map<Node, Set<Edge>> edges = this.topologyManager.getNodeEdges();
+      //log.debug("El mapa de Edges es: " + edges); //Se coloca aquí para poder visualizar
+      if(nodeEdges.equals(null) || !nodeEdges.equals(edges)){
+        this.nodeEdges = edges;
+        buildEdgeMatrix(edges);
+        log.debug("El nuevo mapa de Edges es " + this.nodeEdges);
+      }
+      //log.debug("La nueva matriz es " + this.edgeMatrix[1][0]);//Se coloca aquí para poder visualizar
+      //log.debug("La nueva matriz es " + this.edgeMatrix[0][1]);
+      //log.debug("La nueva matriz es " + this.edgeMatrix[1][1]);
+    }
+
+    /**
+    Method whic travel throug set<NodeConnector>
+    */
+
+    private NodeConnector findHost(Set<NodeConnector> connectors, InetAddress srcIP){
+
+      for (Iterator<NodeConnector> it = connectors.iterator(); it.hasNext(); ) {
+         NodeConnector temp = it.next();
+         List<Host> hosts= this.topologyManager.getHostsAttachedToNodeConnector(temp);
+
+         for(Iterator<Host> ith = hosts.iterator(); ith.hasNext();){
+
+           Host temp2 = ith.next();
+           if(temp2.getNetworkAddress().equals(srcIP)){
+             return temp;
+           }
+
+         }
+
+      }
+      return null;
+    }
+
+    /**
+    Method to build a Map which gives the relation between Edges relative position
+    */
+
+    private void buildEdgeMatrix(Map<Node, Set<Edge>> edges){
+
+      this.edgeMatrix = new Edge[edges.size()][edges.size()];
+      Set<Node> nodes = edges.keySet();
+
+      for(Iterator<Node> it = nodes.iterator(); it.hasNext();){
+
+        Node nodeTemp = it.next();
+        Set<Edge> nodeEdges = edges.get(nodeTemp);
+
+        for(Iterator<Edge> it2 = nodeEdges.iterator(); it2.hasNext();){
+
+          Edge edgeTemp = it2.next();
+          putEdge(edgeTemp);
+
+        }
+
+      }
+    }
+
+    /**
+    *Method to put each edge in their correct place
+    */
+
+    private void putEdge(Edge edge){
+
+      int node1 = getNodeConnectorIndex(edge.getHeadNodeConnector());
+      int node2 = getNodeConnectorIndex(edge.getTailNodeConnector());
+
+      this.edgeMatrix[node1][node2] = edge;
 
     }
 
     /**
-    Method whic travel throug set<Object>
+    *This method provide the possibility to get a index for a nodeConnector
+    *
     */
 
-    private void walkSet(Set<Object> object){
+    private int getNodeConnectorIndex(NodeConnector nodeConnector){
 
-      for (Iterator<Object> it = object.iterator(); it.hasNext(); ) {
-         Object temp = it.next();
-         this.log.debug("El objeto correspondiente a la posicion: " + it + "es " + temp);
-
-      }
+      int index;
+      Node node = nodeConnector.getNode();
+      index = Integer.parseInt(node.getID().toString());
+      return index-1;
 
     }
 
+    /**
+    *New method to evaluate a edgeMatrix and get a Weigh for each edge
+    *The weight will depend our interests so we have differents method
+    *for differents aplicattions
+    */
+
+    private void standardEvaluation(){
+      
+    }
 
 }
